@@ -63,43 +63,39 @@
             <h1>Q1:</h1>
             <p id="question"></p>
           </div>
+          
           <div class="row">
             <div class="col-xs-12 col-lg-12">
-              <p class="text-muted text-center">番号を選択してください。</p>
-            </div>
-            
-            <div>
-	            <div class="col-xs-6 col-lg-6">
-	              <p><a class="btn btn-default btn-lg btn-block" href="#" role="button">1</a></p>
-	            </div>
-	            <div class="col-xs-6 col-lg-6">
-	              <p><a class="btn btn-default btn-lg btn-block" href="#" role="button">2</a></p>
-	            </div>
-	            <div class="col-xs-6 col-lg-6">
-	              <p><a class="btn btn-default btn-lg btn-block" href="#" role="button">3</a></p>
-	            </div>
-	            <div class="col-xs-6 col-lg-6">
-	              <p><a class="btn btn-default btn-lg btn-block" href="#" role="button">4</a></p>
-	            </div>
-	        </div>
+			<form id="form" data-toggle="validator" role="form" method="post" action="answer.html">
+				<div>
+					<p class="text-muted text-center">番号を選択してください。</p>
+				</div>
+				
+				<div class="form-group">
+					<select class="form-control select-center has-feedback" id="number" name="number">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+					</select>
+				</div>
 
-            <div class="col-xs-12 col-lg-12">
-              <div class="mb2"></div>
-              <p class="text-muted text-center">ベットするポイント数を選択してください。</p>
-            </div>
+				<div class="form-group">
+					<div class="mb2"></div>
+					<p class="text-muted text-center">ベットするポイント数を選択してください。</p>
+				</div>
 
-            <div class="col-xs-12">
-              <input id="ex8" class=".slider" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="0" data-slider-step="1" data-slider-value="0"/>
-            </div>
+				<div class="form-group">
+					<input id="ex8" class=".slider" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="0" data-slider-step="1" data-slider-value="0"/>
+				</div>
+				
+				<div class="form-group">
+					<div class="mb2"></div>
+					<button type="submit" class="btn btn-info btn-lg btn-block" id="decision" disabled>決定</button>
+				</div>
+			</form>
+			</div>
           </div><!--/row-->
-        
-          <div class="row">
-            <div class="mb2"></div>
-            <div class="col-xs-12 col-lg-12">
-                <p><a id="decision" class="btn btn-info btn-lg btn-block" href="#" role="button" disabled>決定</a></p>
-            </div>
-          </div>
-
         </div><!--/.col-xs-12.col-sm-9-->
         
       </div><!--/row-->
@@ -117,6 +113,8 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://getbootstrap.com/examples/offcanvas/offcanvas.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.3.0/bootstrap-slider.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
+    <script src="js/jquery.blockUI.js"></script>
     <script src="https://cdn.mlkcca.com/v0.6.0/milkcocoa.js"></script>
     <script>/** JS：記述スペース */
 		var lstorage = (function() {
@@ -134,12 +132,76 @@
 			};
 		}());
 		
+		var page = (function() {
+			return {
+				checkRedirect : function() {
+					if(lstorage.isUndefined('name')) {
+						lstorage.clear();
+						location.href='login.html';
+						return;
+					}
+				}
+			};
+		}());
+		
 		var display = (function(){
 			return {
+				showUserInfo : function() {
+					$('#name').text(lstorage.get('name') + 'さん');
+					$('#point').text(lstorage.get('point'));
+					
+					$('#ex8').attr('data-slider-max', lstorage.get('point'));
+				},
 				showQuestion : function() {
 					$('#question').text('顔認証で認証されない変顔をできる人は？');
+					$.unblockUI();
+				},
+				showDecision : function() {
 					$('#decision').attr('disabled', false);
 					$('#decision').prop('disabled', false);
+				},
+				hideDecision : function() {
+					$('#decision').attr('disabled', true);
+					$('#decision').prop('disabled', true);
+				}
+			};
+		}());
+		
+		var gamestatus = (function() {
+			function notNull(val) {
+				return val != null && val.value != null && val.value.status != null;
+			}
+			
+			return {
+				isWait : function(val) {
+					return notNull(val) && val.value.status === 'wait';
+				},
+				isPlay : function(val) {
+					return notNull(val) && val.value.status === 'play';
+				}
+			};
+		}());
+		
+		var blockUI = (function() {
+			return {
+				show : function() {
+					$.blockUI({
+						message: '問題が始まるまでしばらくお待ち下さい',
+						css: {
+							border: 'none',
+							padding: '10px',
+							backgroundColor: '#333',
+							opacity: 1.0,
+							color: '#fff'
+						},
+						overlayCSS: {
+							backgroundColor: '#000',
+							opacity: 0.8
+						}
+					});
+				},
+				hide : function() {
+					$.unblockUI();
 				}
 			};
 		}());
@@ -148,43 +210,54 @@
 		var casino = milk.dataStore('casinovation');
 		var casinoId = 'iuw3ivxuBhFFja3';
 		
-		casino.on('set', function(set) {
-			// ★ + 回答していないかもチェック
-			if(isEmptyStatus(set) && set.value.status === 'play') {
-				display.showQuestion();
-			}
-		});
-		
-		function isEmptyStatus(val) {
-			return val != null && val.value != null && val.value.status != null;
-		}
-		
-		window.onload = function() { setTimeout(scrollTo, 100, 0, 1); }
-		
 		$(function(){
+			location.hash = 'game.html';
+			// ページ戻り時にも自身のページを履歴に追加
+			$(window).on("hashchange", function(){
+				location.hash = 'game.html';
+			});
+			
 			init();
 			
+				$('#form').validator().on('submit', function(e) {
+					if (e.isDefaultPrevented()) {
+					} else {
+//						var lstorage = window.localStorage;
+//						lstorage.setItem('name', $('#name').val());
+//						lstorage.setItem('point', 100);
+					}
+				});
+			
+			
 			function init() {
-				if(lstorage.isUndefined('name')) {
-					lstorage.clear();
-					location.href='login.html';
-					return;
-				}
+				page.checkRedirect();
+				display.showUserInfo();
 				
-				$('#name').text(lstorage.get('name') + 'さん');
-				$('#point').text(lstorage.get('point'));
-				
-				$('#ex8').attr('data-slider-max', lstorage.get('point'));
-				
-				var slider = new Slider("#ex8", {
-					tooltip: 'always'
+				$('#ex8').slider({
+					tooltip : 'always'
+				}).on('slideStop', function(ev){
+					var val = $('#ex8').data('slider').getValue();
+					if(val > 0) {
+						display.showDecision();
+					} else {
+						display.hideDecision();
+					}
 				});
 				
 				casino.get(casinoId, function(err, datum) {
-					if(isEmptyStatus(datum) && datum.value.status === 'play')
+					if(gamestatus.isWait(datum))
+						blockUI.show();
+					
+					if(gamestatus.isPlay(datum))
 						display.showQuestion();
 				});
 				
+				casino.on('set', function(set) {
+					// ★ + 回答していないかもチェック
+					if(gamestatus.isPlay(set)) {
+						display.showQuestion();
+					}
+				});
 			}
 		});
     </script>
@@ -217,6 +290,9 @@
 		}
 		.mb5{
 			margin-bottom: 5em;
+		}
+		.select-center {
+			text-indent: 50%;
 		}
 	</style>
 </body>

@@ -107,9 +107,13 @@
     <script src="https://getbootstrap.com/examples/offcanvas/offcanvas.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.3.0/bootstrap-slider.min.js"></script>
     <script>/** JS：記述スペース */
-        var slider = new Slider("#ex8", {
-        	tooltip: 'always'
-        });
+		$(function(){
+			location.hash = 'game.html';
+			// ページ戻り時にも自身のページを履歴に追加
+			$(window).on("hashchange", function(){
+				location.hash = 'answer.html';
+			});
+		});
     </script>
     <style>/** CSS：記述スペース */
         .slider {
