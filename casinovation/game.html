@@ -117,7 +117,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://getbootstrap.com/examples/offcanvas/offcanvas.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.3.0/bootstrap-slider.min.js"></script>
-    <script src="js/jquery.blockUI.js"></script>
     <script src="https://cdn.mlkcca.com/v0.6.0/milkcocoa.js"></script>
     <script>/** JS：記述スペース */
 		var lstorage = (function() {
@@ -143,7 +142,6 @@
 			// ★ + 回答していないかもチェック
 			if(set.value.status != null && set.value.status === 'play') {
 				$('#question').text('顔認証で認証されない変顔をできる人は？');
-				$.unblockUI();
 			}
 		});
 		
@@ -167,23 +165,7 @@
 				});
 				
 				casino.get(casinoId, function(err, datum) {
-					if(datum !=null && datum.value != null && datum.value.status == 'wait') {
-						$.blockUI({
-							message: '問題が始まるまでしばらくお待ち下さい',
-							css: {
-								border: 'none',
-								padding: '10px',
-								backgroundColor: '#333',
-								opacity: 1.0,
-								color: '#fff'
-							},
-							overlayCSS: {
-								backgroundColor: '#000',
-								opacity: 0.8
-							}
-						});
-						return;
-					}
+					//★決定ボタンを押させないようにする
 				});
 				
 			}
