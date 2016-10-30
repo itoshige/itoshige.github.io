@@ -60,6 +60,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://getbootstrap.com/examples/offcanvas/offcanvas.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
+    <script src="https://cdn.mlkcca.com/v0.6.0/milkcocoa.js"></script>
     <script>
 		var lstorage = (function() {
 			var st = window.localStorage;
@@ -80,24 +81,30 @@
 			setTimeout(scrollBy, 100, 0, 1);
 		}, false);
 		
+		var milk = new MilkCocoa('hotihlxqti3.mlkcca.com');
+		var casino = milk.dataStore('casinovation');
+		var casinoId = 'iuw3ivxuBhFFja3';
+		
 		$(function(){
 			if (!window.localStorage) {
 			    alert("お使いのブラウザは対応してません。");
 			    $('#login').disabled = true;
 			}
 			
-			if(!lstorage.isUndefined('name') && !lstorage.isUndefined('status')) {
-				var status = lstorage.get('status');
-				
-				if(status == 'wait' || status == 'play') {
-					location.href='game.html';
-				}
-				
-				if(status == 'answer') {
-					location.href='answer.html';
-				}
-				
-				return;
+			if(!lstorage.isUndefined('name')) {
+				casino.get(casinoId, function(err, datum) {
+					var status = datum.value.status;
+					
+					if(status == 'wait' || status == 'play') {
+						location.href='game.html';
+					}
+					
+					if(status == 'answer') {
+						location.href='answer.html';
+					}
+					
+					return;
+				});
 			}
 			
 			$('#form').validator().on('submit', function(e) {
@@ -105,7 +112,6 @@
 				} else {
 					var lstorage = window.localStorage;
 					lstorage.setItem('name', $('#name').val());
-					lstorage.setItem('status', 'waitingGame');
 					lstorage.setItem('point', 100);
 				}
 			});

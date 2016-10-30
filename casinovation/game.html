@@ -137,6 +137,7 @@
 		
 		var milk = new MilkCocoa('hotihlxqti3.mlkcca.com');
 		var casino = milk.dataStore('casinovation');
+		var casinoId = 'iuw3ivxuBhFFja3';
 		
 		casino.on('set', function(set) {
 			// ★ + 回答していないかもチェック
@@ -165,23 +166,25 @@
 					tooltip: 'always'
 				});
 				
-				if(lstorage.get('status') == 'waitingGame') {
-					$.blockUI({
-						message: '問題が始まるまでしばらくお待ち下さい',
-						css: {
-							border: 'none',
-							padding: '10px',
-							backgroundColor: '#333',
-							opacity: 1.0,
-							color: '#fff'
-						},
-						overlayCSS: {
-							backgroundColor: '#000',
-							opacity: 0.8
-						}
-					});
-					return;
-				}
+				casino.get(casinoId, function(err, datum) {
+					if(datum !=null && datum.value != null && datum.value.status == 'wait') {
+						$.blockUI({
+							message: '問題が始まるまでしばらくお待ち下さい',
+							css: {
+								border: 'none',
+								padding: '10px',
+								backgroundColor: '#333',
+								opacity: 1.0,
+								color: '#fff'
+							},
+							overlayCSS: {
+								backgroundColor: '#000',
+								opacity: 0.8
+							}
+						});
+						return;
+					}
+				});
 				
 			}
 		});
