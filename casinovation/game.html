@@ -96,7 +96,7 @@
           <div class="row">
             <div class="mb2"></div>
             <div class="col-xs-12 col-lg-12">
-                <p><a class="btn btn-info btn-lg btn-block" href="#" role="button">決定</a></p>
+                <p><a id="decision" class="btn btn-info btn-lg btn-block" href="#" role="button" disabled>決定</a></p>
             </div>
           </div>
 
@@ -134,16 +134,32 @@
 			};
 		}());
 		
+		var display = (function(){
+			return {
+				showQuestion : function() {
+					$('#question').text('顔認証で認証されない変顔をできる人は？');
+					$('#decision').attr('disabled', false);
+					$('#decision').prop('disabled', false);
+				}
+			};
+		}());
+		
 		var milk = new MilkCocoa('hotihlxqti3.mlkcca.com');
 		var casino = milk.dataStore('casinovation');
 		var casinoId = 'iuw3ivxuBhFFja3';
 		
 		casino.on('set', function(set) {
 			// ★ + 回答していないかもチェック
-			if(set.value.status != null && set.value.status === 'play') {
-				$('#question').text('顔認証で認証されない変顔をできる人は？');
+			if(isEmptyStatus(set) && set.value.status === 'play') {
+				display.showQuestion();
 			}
 		});
+		
+		function isEmptyStatus(val) {
+			return val != null && val.value != null && val.value.status != null;
+		}
+		
+		window.onload = function() { setTimeout(scrollTo, 100, 0, 1); }
 		
 		$(function(){
 			init();
@@ -165,7 +181,8 @@
 				});
 				
 				casino.get(casinoId, function(err, datum) {
-					//★決定ボタンを押させないようにする
+					if(isEmptyStatus(datum) && datum.value.status === 'play')
+						display.showQuestion();
 				});
 				
 			}
