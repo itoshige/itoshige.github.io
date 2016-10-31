@@ -62,7 +62,7 @@
           <br/>
           <div class="row">
             <div class="col-xs-12 col-lg-12">
-              <div class="text-muted text-center value">3</div>
+              <div class="text-muted text-center value" id="my-answer">0</div>
             </div>
           </div><!--/row-->
 
@@ -115,6 +115,8 @@
 			$(window).on("hashchange", function(){
 				location.hash = 'answer.html';
 			});
+			
+			$('#my-answer').text(lstorage.get('answer'));
 		});
     </script>
     <style>/** CSS：記述スペース */

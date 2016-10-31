@@ -4,6 +4,9 @@ var lstorage = (function() {
 		isUndefined : function(key) {
 			return !st.getItem(key);
 		},
+		set : function(key, value) {
+			st.setItem(key, value);
+		},
 		get : function(key) {
 			return st.getItem(key);
 		},
@@ -16,7 +19,9 @@ var lstorage = (function() {
 var page = (function() {
 	return {
 		checkRedirect : function() {
-			if(lstorage.isUndefined('name')) {
+			var filename = location.href.match(".+/(.+?)\.[a-z]+([\?#;].*)?$")[1];
+
+			if(filename != 'login' && lstorage.isUndefined('name')) {
 				lstorage.clear();
 				location.href='login.html';
 				return;
