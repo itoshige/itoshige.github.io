@@ -61,36 +61,13 @@
     <script src="https://getbootstrap.com/examples/offcanvas/offcanvas.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
     <script src="https://cdn.mlkcca.com/v0.6.0/milkcocoa.js"></script>
+    <script src="js/common.js"></script>
     <script>
-		var lstorage = (function() {
-			var st = window.localStorage;
-			return {
-				isUndefined : function(key) {
-					return !st.getItem(key);
-				},
-				get : function(key) {
-					return st.getItem(key);
-				},
-				clear : function() {
-					st.clear();
-				}
-			};
-		}());
-		
-		var milk = new MilkCocoa('hotihlxqti3.mlkcca.com');
-		var casino = milk.dataStore('casinovation');
-		var casinoId = 'iuw3ivxuBhFFja3';
-		
 		$(function(){
-			if (!window.localStorage) {
-			    alert("お使いのブラウザは対応してません。");
-			    $('#login').disabled = true;
-			}
-			
-			location.hash = 'game.html';
+			location.hash = 'login.html';
 			// ページ戻り時にも自身のページを履歴に追加
 			$(window).on("hashchange", function(){
-				location.hash = 'game.html';
+				location.hash = 'login.html';
 			});
 			
 			if(!lstorage.isUndefined('name')) {

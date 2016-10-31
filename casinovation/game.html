@@ -39,9 +39,9 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Game</a></li>
-            <li><a href="#about">Gift Exchange</a></li>
-            <li><a href="#contact">Logout</a></li>
+            <li class="active"><a href="game.html">Game</a></li>
+            <li><a href="#gift-exchange.html">Gift Exchange</a></li>
+            <li><a href="login.html" id="logout">Logout</a></li>
           </ul>
         </div><!-- /.nav-collapse -->
       </div><!-- /.container -->
@@ -115,73 +115,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.3.0/bootstrap-slider.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script>
     <script src="js/jquery.blockUI.js"></script>
+    <script src="js/common.js"></script>
     <script src="https://cdn.mlkcca.com/v0.6.0/milkcocoa.js"></script>
     <script>/** JS：記述スペース */
-		var lstorage = (function() {
-			var st = window.localStorage;
-			return {
-				isUndefined : function(key) {
-					return !st.getItem(key);
-				},
-				get : function(key) {
-					return st.getItem(key);
-				},
-				clear : function() {
-					st.clear();
-				}
-			};
-		}());
-		
-		var page = (function() {
-			return {
-				checkRedirect : function() {
-					if(lstorage.isUndefined('name')) {
-						lstorage.clear();
-						location.href='login.html';
-						return;
-					}
-				}
-			};
-		}());
-		
-		var display = (function(){
-			return {
-				showUserInfo : function() {
-					$('#name').text(lstorage.get('name') + 'さん');
-					$('#point').text(lstorage.get('point'));
-					
-					$('#ex8').attr('data-slider-max', lstorage.get('point'));
-				},
-				showQuestion : function() {
-					$('#question').text('顔認証で認証されない変顔をできる人は？');
-					$.unblockUI();
-				},
-				showDecision : function() {
-					$('#decision').attr('disabled', false);
-					$('#decision').prop('disabled', false);
-				},
-				hideDecision : function() {
-					$('#decision').attr('disabled', true);
-					$('#decision').prop('disabled', true);
-				}
-			};
-		}());
-		
-		var gamestatus = (function() {
-			function notNull(val) {
-				return val != null && val.value != null && val.value.status != null;
-			}
-			
-			return {
-				isWait : function(val) {
-					return notNull(val) && val.value.status === 'wait';
-				},
-				isPlay : function(val) {
-					return notNull(val) && val.value.status === 'play';
-				}
-			};
-		}());
-		
 		var blockUI = (function() {
 			return {
 				show : function() {
@@ -206,10 +142,6 @@
 			};
 		}());
 		
-		var milk = new MilkCocoa('hotihlxqti3.mlkcca.com');
-		var casino = milk.dataStore('casinovation');
-		var casinoId = 'iuw3ivxuBhFFja3';
-		
 		$(function(){
 			location.hash = 'game.html';
 			// ページ戻り時にも自身のページを履歴に追加
@@ -219,21 +151,17 @@
 			
 			init();
 			
-				$('#form').validator().on('submit', function(e) {
-					if (e.isDefaultPrevented()) {
-					} else {
-					//	★localstorageのポイント数変更　＋　answer のlocal用意？
+			$('#form').validator().on('submit', function(e) {
+				if (e.isDefaultPrevented()) {
+				} else {
+				//	★localstorageのポイント数変更　＋　answer のlocal用意？
 //						var lstorage = window.localStorage;
 //						lstorage.setItem('name', $('#name').val());
 //						lstorage.setItem('point', 100);
-					}
-				});
-			
+				}
+			});
 			
 			function init() {
-				page.checkRedirect();
-				display.showUserInfo();
-				
 				$('#ex8').slider({
 					tooltip : 'always'
 				}).on('slideStop', function(ev){
